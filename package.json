@@ -1,0 +1,21 @@
+{
+	"name": "acorn-server",
+	"version": "0.1.0",
+	"main": "index.js",
+	"author": "Nils Ceberg",
+	"license": "MIT",
+	"scripts": {
+		"start": "node build/index"
+	},
+	"devDependencies": {
+		"@types/koa": "^2.0.50",
+		"@types/koa-router": "^7.0.42",
+		"typescript": "^3.6.4"
+	},
+	"dependencies": {
+		"apollo-server-koa": "^2.9.6",
+		"graphql": "^14.5.8",
+		"koa": "^2.10.0",
+		"koa-router": "^7.4.0"
+	}
+}
