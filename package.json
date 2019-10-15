@@ -10,12 +10,16 @@
 	"devDependencies": {
 		"@types/koa": "^2.0.50",
 		"@types/koa-router": "^7.0.42",
+		"@types/ws": "^6.0.3",
 		"typescript": "^3.6.4"
 	},
 	"dependencies": {
+		"@types/koa-websocket": "^5.0.4",
 		"apollo-server-koa": "^2.9.6",
 		"graphql": "^14.5.8",
 		"koa": "^2.10.0",
-		"koa-router": "^7.4.0"
+		"koa-router": "^7.4.0",
+		"koa-websocket": "^6.0.0",
+		"ws": "^7.1.2"
 	}
 }
