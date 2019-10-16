@@ -1,5 +1,7 @@
 import Koa from "koa";
 import KoaRouter from "koa-router";
+import serve from "koa-static";
+import mount from "koa-mount";
 import websockify from "koa-websocket";
 
 import { createApolloServer } from "./api/index";
@@ -24,6 +26,9 @@ async function start() {
 	router.get("/test", ctx => {
 		ctx.body = "hello world";
 	});
+	
+	app.use(mount("/resources", serve("resources")));
+
 	app
 		.use(router.routes())
 		.use(router.allowedMethods());
