@@ -1,4 +1,5 @@
 import { PlaylistItem } from "./PlaylistItem";
+import { PlaylistPointer } from "./PlaylistPointer";
 
 export class Playlist {
 	private defaultDuration: number;
@@ -24,5 +25,13 @@ export class Playlist {
 
 	getItems(): PlaylistItem[] {
 		return this.items;
+	}
+
+	play(): PlaylistPointer {
+		return new PlaylistPointer(this, this.items);
+	}
+
+	getDefaultDuration(): number {
+		return this.defaultDuration;
 	}
 }

@@ -51,10 +51,6 @@ export class Screen implements LogicalScreen {
 		this.parent = parent;
 	}
 
-	public async start() {
-		console.log(`Screen ${await this.getName()} started. <- ${this.getParent() ? await this.getParent().getName() : "root"}`);
-	}
-
 	public setConnection(connection: Connection) {
 		this.connection = connection;
 
@@ -80,5 +76,25 @@ export class Screen implements LogicalScreen {
 
 	public getIdentify(): boolean {
 		return this.identify;
+	}
+
+	public async start() {
+		console.log(`Screen ${await this.getName()} started. <- ${this.getParent() ? await this.getParent().getName() : "root"}`);
+		
+		if (!this.schedule) {
+			console.log("Äeh, vi skiter i detta. /" + await this.getName());
+			return;
+		}
+		
+		const playlist = this.schedule.getPlaylist();
+		const pointer = playlist.play();
+
+		while (true) {
+			const item = await pointer.next();
+
+			if (this.connection) {
+				this.connection.display(item.getType(), item.getPlayerData());
+			}
+		}
 	}
 }
