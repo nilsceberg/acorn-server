@@ -4,24 +4,40 @@ import websockify from "koa-websocket";
 
 import { server as apolloServer } from "./api/index";
 import { Connection } from "./net/Connection";
+import { Server } from "./Server";
+import { JsonStore } from "./stores/JsonStore";
 
-const server = websockify(new Koa());
+async function start() {
+	console.log("Opening JSON store...")
+	const jsonStore = new JsonStore("content.json");
+	await jsonStore.load();
 
-const router = new KoaRouter();
-router.get("/test", ctx => {
-	ctx.body = "hello world";
-});
-server
-	.use(router.routes())
-	.use(router.allowedMethods());
+	console.log("Starting server...");
+	const server = new Server(jsonStore);
+	await server.load();
+	console.log("Loaded.");
 
-apolloServer.applyMiddleware({ app: server, path: "/api" });
+	console.log("Opening API...");
+	const app = websockify(new Koa());
 
-server.ws.use(ctx => {
-	const conn = new Connection(ctx.websocket);
-	conn.start();
-});
+	const router = new KoaRouter();
+	router.get("/test", ctx => {
+		ctx.body = "hello world";
+	});
+	app
+		.use(router.routes())
+		.use(router.allowedMethods());
 
-server.listen(8080, () => {
-	console.log("Listening on port 8080");
-});
+	apolloServer.applyMiddleware({ app: app, path: "/api" });
+
+	app.ws.use(ctx => {
+		const conn = new Connection(ctx.websocket);
+		conn.start();
+	});
+
+	app.listen(8080, () => {
+		console.log("Listening on port 8080");
+	});
+}
+
+start();

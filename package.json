@@ -10,6 +10,7 @@
 	"devDependencies": {
 		"@types/koa": "^2.0.50",
 		"@types/koa-router": "^7.0.42",
+		"@types/uuid": "^3.4.5",
 		"@types/ws": "^6.0.3",
 		"typescript": "^3.6.4"
 	},
@@ -20,6 +21,7 @@
 		"koa": "^2.10.0",
 		"koa-router": "^7.4.0",
 		"koa-websocket": "^6.0.0",
+		"uuid": "^3.3.3",
 		"ws": "^7.1.2"
 	}
 }
