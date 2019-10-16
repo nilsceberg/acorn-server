@@ -3,20 +3,23 @@ import { Store, ScreenData } from "./stores/Store";
 import { Connection } from "./net/Connection";
 import { ScreenRef } from "./ScreenRef";
 import { ScreenGroup } from "./ScreenGroup";
+import { Schedule } from "./Schedule";
 
 export class Screen implements LogicalScreen {
 	private name: string;
 	private ref: ScreenRef;
 	private parent: ScreenGroup;
 	private connection: Connection;
+	private schedule: Schedule;
 
 	private identify: boolean = false;
 
-	constructor(name: string, ref: ScreenRef) {
+	constructor(name: string, ref: ScreenRef, schedule: Schedule) {
 		this.name = name;
 		this.ref = ref;
 		this.parent = null;
 		this.connection = null;
+		this.schedule = schedule;
 	}
 
 	public async getName(): Promise<string> {

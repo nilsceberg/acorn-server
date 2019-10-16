@@ -2,6 +2,7 @@ import WebSocket from "ws";
 import { Server } from "../Server";
 import { LogicalScreen } from "../LogicalScreen";
 import { Screen } from "../Screen";
+import { PlaylistItemType } from "../PlaylistItem";
 
 type State = (message: any) => Promise<State>;
 
@@ -85,9 +86,20 @@ export class Connection {
 		return this.disconnectedState;
 	}
 
+	// These functions only make sense to call in the connectedState,
+	// but that's the only time when anyone should have access to call them
+	// anyway. Maybe add an assert or something!
 	public identify(id: boolean) {
 		this.send({
 			identify: id
+		});
+	}
+
+	public display(type: PlaylistItemType, data: any) {
+		this.send({
+			display: {
+				type, data
+			}
 		});
 	}
 }

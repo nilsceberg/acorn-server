@@ -28,9 +28,32 @@ type PendingRegistration {
 	uuid: String!
 }
 
+enum PlaylistItemType {
+	Website, Image
+}
+
+type PlaylistItem {
+	name: String!
+	type: PlaylistItemType!
+}
+
+type Playlist {
+	name: String!
+	uuid: String!
+	items: [PlaylistItem!]!
+}
+
+type Schedule {
+	name: String!
+	uuid: String!
+	playlist: Playlist
+}
+
 type Query {
 	screens: [Screen]!
 	pendingRegistrations: [PendingRegistration]!
+	playlists: [Playlist!]!
+	playlist(uuid: String!): Playlist
 }
 
 type Mutation {

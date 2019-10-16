@@ -2,13 +2,24 @@ import { PlaylistItem } from "./PlaylistItem";
 
 export class Playlist {
 	private defaultDuration: number;
-	private timeoutHandle: NodeJS.Timeout;
 	private items: PlaylistItem[];
 
-	constructor() {
+	private name: string;
+	private uuid: string;
+
+	constructor(name: string, uuid: string, items: PlaylistItem[]) {
 		this.defaultDuration = 5;
-		this.timeoutHandle = null;
-		this.items = [];
+		this.name = name;
+		this.uuid = uuid;
+		this.items = items;
+	}
+
+	getName(): string {
+		return this.name;
+	}
+
+	setName(name: string) {
+		this.name = name;
 	}
 
 	getItems(): PlaylistItem[] {
