@@ -9,15 +9,15 @@ import { LogicalScreen } from "../LogicalScreen";
 export function createApolloServer(server: Server) {
 
 	const pending: PendingRegistrationScreen[] = [
-		{
-			hostname: "outcast.internal.dsek.se",
-			ip: "192.168.86.173",
-			uuid: uuid.v4(),
-		},
-		{
-			ip: "83.41.199.13",
-			uuid: uuid.v4(),
-		},
+//		{
+//			hostname: "outcast.internal.dsek.se",
+//			ip: "192.168.86.173",
+//			uuid: uuid.v4(),
+//		},
+//		{
+//			ip: "83.41.199.13",
+//			uuid: uuid.v4(),
+//		},
 	];
 
 	const serializeScreen = async (screen: LogicalScreen): Promise<ScreenResponse> => {
