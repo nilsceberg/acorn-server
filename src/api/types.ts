@@ -1,10 +1,11 @@
 import { gql } from "apollo-server-koa";
 
-export interface Screen {
+export interface ScreenResponse {
 	name: string;
+	uuid: string;
 }
 
-export interface PendingRegistration {
+export interface PendingRegistrationScreen {
 	hostname?: string;
 	ip: string;
 	uuid: string;
@@ -13,6 +14,8 @@ export interface PendingRegistration {
 export const typeDefs = gql`
 type Screen {
 	name: String!
+	uuid: String!
+	children: [Screen]
 }
 
 type PendingRegistration {

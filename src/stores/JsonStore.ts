@@ -45,7 +45,7 @@ export class JsonStore {
 				type: data.children ? ScreenType.Group : ScreenType.Screen,
 				uuid: uuid,
 				name: data.name,
-				children: data.children,
+				children: [...(data.children || [])],
 			});
 		}
 		return array;

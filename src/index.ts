@@ -2,7 +2,7 @@ import Koa from "koa";
 import KoaRouter from "koa-router";
 import websockify from "koa-websocket";
 
-import { server as apolloServer } from "./api/index";
+import { createApolloServer } from "./api/index";
 import { Connection } from "./net/Connection";
 import { Server } from "./Server";
 import { JsonStore } from "./stores/JsonStore";
@@ -28,10 +28,10 @@ async function start() {
 		.use(router.routes())
 		.use(router.allowedMethods());
 
-	apolloServer.applyMiddleware({ app: app, path: "/api" });
+	createApolloServer(server).applyMiddleware({ app: app, path: "/api" });
 
 	app.ws.use(ctx => {
-		const conn = new Connection(ctx.websocket);
+		const conn = new Connection(ctx.websocket, server);
 		conn.start();
 	});
 

@@ -1,12 +1,15 @@
 import WebSocket from "ws";
+import { Server } from "../Server";
 
 type State = (message: any) => Promise<State>;
 
 export class Connection {
 	private ws: WebSocket;
 	private state: State;
+	private server: Server;
 
-	constructor(ws: WebSocket) {
+	constructor(ws: WebSocket, server: Server) {
+		this.server = server;
 		this.ws = ws;
 		this.state = this.initState;
 	}
