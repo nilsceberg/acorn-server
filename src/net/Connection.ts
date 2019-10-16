@@ -53,7 +53,7 @@ export class Connection {
 		}
 
 		const uuid = message.uuid;
-		console.log("Hello from " + uuid)
+		console.log(`[${this.ws.url}] Hello from ${uuid}`)
 
 		const screen = this.server.getScreen(uuid);
 		if (!screen) {

@@ -56,7 +56,6 @@ export class Screen implements LogicalScreen {
 		this.connection = connection;
 
 		if (connection) {
-			this.setIdentify(true);
 		}
 		else {
 			this.identify = false;
