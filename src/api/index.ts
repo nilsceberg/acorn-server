@@ -24,6 +24,8 @@ export function createApolloServer(server: Server) {
 		return {
 			name: await screen.getName(),
 			uuid: screen.getUuid(),
+			connected: screen.isConnected(),
+			identify: screen.getIdentify(),
 		};
 	}
 
@@ -44,7 +46,16 @@ export function createApolloServer(server: Server) {
 					return parentScreen.getChildren().map(serializeScreen);
 				}
 			}
-		}
+		},
+		Mutation: {
+			identify: (parent: any, args: any) => {
+				const screen = server.getScreen(args.uuid);
+				if (screen) {
+					return screen.setIdentify(args.identify);
+				}
+				return false;
+			}
+		},
 	};
 
 	return new ApolloServer({

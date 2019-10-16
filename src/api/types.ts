@@ -3,6 +3,8 @@ import { gql } from "apollo-server-koa";
 export interface ScreenResponse {
 	name: string;
 	uuid: string;
+	connected?: boolean;
+	identify?: boolean;
 }
 
 export interface PendingRegistrationScreen {
@@ -15,6 +17,8 @@ export const typeDefs = gql`
 type Screen {
 	name: String!
 	uuid: String!
+	connected: Boolean
+	identify: Boolean
 	children: [Screen]
 }
 
@@ -31,5 +35,6 @@ type Query {
 
 type Mutation {
 	renameScreen(uuid: String!): Screen
+	identify(uuid: String!, identify: Boolean!): Boolean!
 }
 `;

@@ -10,6 +10,8 @@ export class Screen implements LogicalScreen {
 	private parent: ScreenGroup;
 	private connection: Connection;
 
+	private identify: boolean = false;
+
 	constructor(name: string, ref: ScreenRef) {
 		this.name = name;
 		this.ref = ref;
@@ -48,5 +50,33 @@ export class Screen implements LogicalScreen {
 
 	public async start() {
 		console.log(`Screen ${await this.getName()} started. <- ${this.getParent() ? await this.getParent().getName() : "root"}`);
+	}
+
+	public setConnection(connection: Connection) {
+		this.connection = connection;
+
+		if (connection) {
+			this.setIdentify(true);
+		}
+		else {
+			this.identify = false;
+		}
+	}
+	
+	public isConnected(): boolean {
+		return this.connection !== null;
+	}
+
+	public setIdentify(identify: boolean): boolean {
+		this.identify = identify;
+		if (this.connection) {
+			console.log("Sending identify = " + this.identify + " to " + this.name);
+			this.connection.identify(this.identify);
+		}
+		return identify;
+	}
+
+	public getIdentify(): boolean {
+		return this.identify;
 	}
 }

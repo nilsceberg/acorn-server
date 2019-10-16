@@ -64,4 +64,16 @@ export class ScreenGroup implements LogicalScreen {
 	public getChildren(): LogicalScreen[] {
 		return this.children.map(s => s.get());
 	}
+	
+	public isConnected(): boolean {
+		return null;
+	}
+
+	public getIdentify(): boolean {
+		return false;
+	}
+
+	public setIdentify(): boolean {
+		return false;
+	}
 }

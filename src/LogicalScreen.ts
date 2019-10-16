@@ -6,7 +6,10 @@ export interface LogicalScreen {
 	getName(): Promise<string>;
 	setName(name: string): Promise<string>;
 	getUuid(): string;
+	isConnected(): boolean;
 	start(): Promise<void>;
 	getParent(): ScreenGroup;
 	setParent(parent: ScreenGroup): Promise<void>;
+	setIdentify(identify: boolean): boolean;
+	getIdentify(): boolean;
 }
