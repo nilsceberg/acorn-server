@@ -66,8 +66,8 @@ export class Connection {
 				name: await screen.getName()
 			});
 
-			screen.setConnection(this);
 			this.screen = screen;
+			screen.setConnection(this);
 
 			return this.connectedState;
 		}

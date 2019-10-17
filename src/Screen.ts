@@ -4,6 +4,7 @@ import { Connection } from "./net/Connection";
 import { ScreenRef } from "./ScreenRef";
 import { ScreenGroup } from "./ScreenGroup";
 import { Schedule } from "./Schedule";
+import { Condition } from "./util/Condition";
 
 export class Screen implements LogicalScreen {
 	private name: string;
@@ -14,12 +15,15 @@ export class Screen implements LogicalScreen {
 
 	private identify: boolean = false;
 
+	private connectionCondition: Condition;
+
 	constructor(name: string, ref: ScreenRef, schedule: Schedule) {
 		this.name = name;
 		this.ref = ref;
 		this.parent = null;
 		this.connection = null;
 		this.schedule = schedule;
+		this.connectionCondition = new Condition();
 	}
 
 	public async getName(): Promise<string> {
@@ -59,6 +63,8 @@ export class Screen implements LogicalScreen {
 		else {
 			this.identify = false;
 		}
+
+		this.connectionCondition.notifyAll();
 	}
 	
 	public isConnected(): boolean {
@@ -86,14 +92,27 @@ export class Screen implements LogicalScreen {
 			return;
 		}
 		
-		const playlist = this.schedule.getPlaylist();
-		const pointer = playlist.play();
-
 		while (true) {
-			const item = await pointer.next();
+			console.log("Waiting for connection...");
+			while (!this.connection) {
+				await this.connectionCondition.wait();
+			}
+			console.log("Connection detected.");
 
-			if (this.connection) {
-				this.connection.display(item.getType(), item.getPlayerData());
+			const playlist = this.schedule.getPlaylist();
+			const pointer = playlist.play();
+
+			while (this.connection) {
+				const item = await Promise.race([pointer.next(), this.connectionCondition.wait()]);
+
+				if (item) {
+					if (this.connection) {
+						this.connection.display(item.getType(), item.getPlayerData());
+					}
+				}
+				else {
+					console.log("Disconnection detected.");
+				}
 			}
 		}
 	}
