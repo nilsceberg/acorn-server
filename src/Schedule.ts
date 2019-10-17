@@ -11,6 +11,10 @@ export class Schedule {
 		this.playlist = playlist;
 	}
 
+	getUuid(): string {
+		return this.uuid;
+	}
+
 	getPlaylist(): Playlist {
 		return this.playlist;
 	}

@@ -2,14 +2,18 @@ import { ScreenRef } from "./ScreenRef";
 import { ScreenGroup } from "./ScreenGroup";
 
 export interface LogicalScreen {
-	getSubScreens(): Promise<LogicalScreen[]>;
-	getName(): Promise<string>;
-	setName(name: string): Promise<string>;
-	getUuid(): string;
-	isConnected(): boolean;
-	start(): Promise<void>;
-	getParent(): ScreenGroup;
 	setParent(parent: ScreenGroup): Promise<void>;
+	setName(name: string): Promise<string>;
+	getSubScreens(): LogicalScreen[];
+	getUuid(): string;
+	getName(): string;
+	getParent(): ScreenGroup;
+
+	initParent(): void;
+
+	start(): Promise<void>;
+
 	setIdentify(identify: boolean): boolean;
 	getIdentify(): boolean;
+	isConnected(): boolean;
 }

@@ -20,9 +20,9 @@ export function createApolloServer(server: Server) {
 //		},
 	];
 
-	const serializeScreen = async (screen: LogicalScreen): Promise<ScreenResponse> => {
+	const serializeScreen = (screen: LogicalScreen): ScreenResponse => {
 		return {
-			name: await screen.getName(),
+			name: screen.getName(),
 			uuid: screen.getUuid(),
 			connected: screen.isConnected(),
 			identify: screen.getIdentify(),
@@ -39,7 +39,7 @@ export function createApolloServer(server: Server) {
 			pendingRegistrations: () => pending,
 		},
 		Screen: {
-			children: (parent: any, args: any, context: any, info: any): Promise<ScreenResponse>[] => {
+			children: (parent: any, args: any, context: any, info: any): ScreenResponse[] => {
 				console.log(parent);
 				const parentScreen = server.getScreen(parent.uuid);
 				if (parentScreen instanceof ScreenGroup) {
@@ -54,6 +54,13 @@ export function createApolloServer(server: Server) {
 					return screen.setIdentify(args.identify);
 				}
 				return false;
+			},
+			renameScreen: async (parent: any, args: { uuid: string, name: string }) => {
+				const screen = server.getScreen(args.uuid);
+				if (screen) {
+					await screen.setName(args.name);
+					return serializeScreen(screen);
+				}
 			}
 		},
 	};

@@ -57,7 +57,7 @@ type Query {
 }
 
 type Mutation {
-	renameScreen(uuid: String!): Screen
+	renameScreen(uuid: String!, name: String!): Screen
 	identify(uuid: String!, identify: Boolean!): Boolean!
 }
 `;

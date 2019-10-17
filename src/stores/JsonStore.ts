@@ -44,15 +44,19 @@ export class JsonStore {
 			await file.close();
 		} catch (e) {
 			console.warn(e);
-			try {
-				const file = await fs.open(this.filename, "w");
-				await file.writeFile(JSON.stringify(this.data), {
-					encoding: "utf-8"
-				});
-				await file.close();
-			} catch (f) {
-				console.error(e);
-			}
+			await this.write();
+		}
+	}
+
+	public async write() {
+		try {
+			const file = await fs.open(this.filename, "w");
+			await file.writeFile(JSON.stringify(this.data, null, 2), {
+				encoding: "utf-8"
+			});
+			await file.close();
+		} catch (e) {
+			console.error(e);
 		}
 	}
 
@@ -108,6 +112,7 @@ export class JsonStore {
 			schedule: data.schedule,
 			parent: data.parent,
 		};
+		await this.write();
 	}
 
 	public async savePlaylist(data: PlaylistData): Promise<void> {
@@ -115,5 +120,6 @@ export class JsonStore {
 			name: data.name,
 			items: data.items,
 		};
+		await this.write();
 	}
 }

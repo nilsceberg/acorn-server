@@ -59,23 +59,24 @@ export class Server {
 					data.name,
 					new ScreenRef(data.uuid, this.screens),
 					data.schedule ? this.getSchedule(data.schedule) : null,
+					new ScreenRef(data.parent, this.screens),
+					this.store,
 				);
 			}
 			else {
 				this.screens[data.uuid] = new ScreenGroup(
 					data.name,
 					new ScreenRef(data.uuid, this.screens),
+					new ScreenRef(data.parent, this.screens),
+					this.store,
 				);
 			}
 		}
 
 		// Initialize screen's parents
-		for (const uuid in this.screens) {
-			const screen = this.screens[uuid];
-			if (screen instanceof ScreenGroup) {
-				screen.getChildren().forEach(s => s.setParent(screen))
-			}
-		}
+		Object.values(this.screens).forEach(
+			s => s.initParent()
+		);
 
 		console.log(util.inspect(this.screens, {
 			colors: true,

@@ -1,5 +1,5 @@
 import { LogicalScreen } from "./LogicalScreen";
-import { Store, ScreenData } from "./stores/Store";
+import { Store, ScreenData, ScreenType } from "./stores/Store";
 import { Connection } from "./net/Connection";
 import { ScreenRef } from "./ScreenRef";
 import { ScreenGroup } from "./ScreenGroup";
@@ -12,34 +12,50 @@ export class Screen implements LogicalScreen {
 	private parent: ScreenGroup;
 	private connection: Connection;
 	private schedule: Schedule;
+	private store: Store;
+	private parentRef: ScreenRef;
+	
 
 	private identify: boolean = false;
 
 	private connectionCondition: Condition;
 
-	constructor(name: string, ref: ScreenRef, schedule: Schedule) {
+	constructor(name: string, ref: ScreenRef, schedule: Schedule, parentRef: ScreenRef, store: Store) {
 		this.name = name;
 		this.ref = ref;
 		this.parent = null;
 		this.connection = null;
 		this.schedule = schedule;
 		this.connectionCondition = new Condition();
+		this.store = store;
+		this.parentRef = parentRef;
 	}
 
-	public async getName(): Promise<string> {
+	private save(): Promise<void> {
+		return this.store.saveScreen({
+			uuid: this.getUuid(),
+			name: this.name,
+			parent: this.parent ? this.parent.getUuid() : null,
+			type: ScreenType.Screen,
+			schedule: this.schedule.getUuid(),
+		});
+	}
+
+	public getName(): string {
 		return this.name;
 	}
 
-	public async setName(): Promise<string> {
+	public async setName(name: string): Promise<string> {
+		this.name = name;
+		await this.save();
 		return this.name;
-		//return this.;
 	}
 
 	public getUuid(): string {
 		return this.ref.uuid;
 	}
 
-	public async getSubScreens(): Promise<LogicalScreen[]> {
+	public getSubScreens(): LogicalScreen[] {
 		return [this];
 	}
 
@@ -47,12 +63,22 @@ export class Screen implements LogicalScreen {
 		return this.parent || null;
 	}
 
+	public initParent() {
+		const group = this.parentRef.get();
+		if (group instanceof ScreenGroup) {
+			this.parent = group;
+			group.addChild(this.ref);
+		}
+	}
+
 	public async setParent(parent: ScreenGroup): Promise<void> {
 		if (this.parent) {
 			this.parent.removeChild(this.ref);
 		}
+
 		parent.addChild(this.ref);
 		this.parent = parent;
+		await this.save();
 	}
 
 	public setConnection(connection: Connection) {
@@ -85,10 +111,10 @@ export class Screen implements LogicalScreen {
 	}
 
 	public async start() {
-		console.log(`Screen ${await this.getName()} started. <- ${this.getParent() ? await this.getParent().getName() : "root"}`);
+		console.log(`Screen ${this.getName()} started. <- ${this.getParent() ? this.getParent().getName() : "root"}`);
 		
 		if (!this.schedule) {
-			console.log("Äeh, vi skiter i detta. /" + await this.getName());
+			console.log("Äeh, vi skiter i detta. /" + this.getName());
 			return;
 		}
 		

@@ -102,4 +102,10 @@ export class Connection {
 			}
 		});
 	}
+
+	public rename(name: string) {
+		this.send({
+			rename: name
+		});
+	}
 }
