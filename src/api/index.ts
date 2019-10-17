@@ -64,7 +64,9 @@ export function createApolloServer(server: Server) {
 					.filter(s => s.getParent() === null)
 					.map(serializeScreen);
 			},
-			pendingRegistrations: () => pending,
+			pendingRegistrations: () => {
+				return server.getPendingRegistrations();
+			},
 			playlists: async () => {
 				return server.getPlaylists()
 					.map(serializePlaylist);
@@ -75,6 +77,9 @@ export function createApolloServer(server: Server) {
 					return serializePlaylist(playlist);
 				}
 				return null;
+			},
+			schedules: async () => {
+				return server.getSchedules().map(serializeSchedule);
 			}
 		},
 		Screen: {
@@ -192,6 +197,13 @@ export function createApolloServer(server: Server) {
 					return serializeScreen(screen);
 				}
 			},
+			
+			acceptNew: async (parent: any, args: { screen: string, name: string }): Promise<ScreenResponse> => {
+				const screen = await server.acceptRegistration(args.screen, args.name);
+				if (screen) {
+					return serializeScreen(screen);
+				}
+			}
 		},
 	};
 

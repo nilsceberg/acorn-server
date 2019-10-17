@@ -112,5 +112,7 @@ type Mutation {
 
 	setSchedulePlaylist(schedule: ID!, playlist: ID!): Schedule
 	setScreenSchedule(screen: ID!, schedule: ID!): Screen
+	
+	acceptNew(screen: ID!, name: String!): Screen
 }
 `;

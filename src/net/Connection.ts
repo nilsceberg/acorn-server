@@ -11,6 +11,7 @@ export class Connection {
 	private state: State;
 	private server: Server;
 	private screen: Screen;
+	private closed: boolean = false;
 
 	constructor(ws: WebSocket, server: Server) {
 		this.server = server;
@@ -35,12 +36,17 @@ export class Connection {
 		})
 	}
 
+	public isClosed(): boolean {
+		return this.closed;
+	}
+
 	private send(message: any) {
 		this.ws.send(JSON.stringify(message));
 	}
 
 	private close(reason?: string): State {
 		console.log("Closing connection: " + reason);
+		this.closed = true;
 		this.ws.close();
 		if (this.screen) {
 			this.screen.setConnection(null);
@@ -58,12 +64,21 @@ export class Connection {
 
 		const screen = this.server.getScreen(uuid);
 		if (!screen) {
-			return this.close("Registration not implemented");
+			this.server.register({
+				uuid: message.uuid,
+				hostname: message.hostname || null,
+				ip: "0.0.0.0",
+				connection: this,
+			});
+			this.send({
+				pending: true
+			});
+			return this.connectedState;
 		}
 
 		if (screen instanceof Screen) {
 			this.send({
-				name: await screen.getName()
+				name: screen.getName()
 			});
 
 			this.screen = screen;
@@ -106,6 +121,18 @@ export class Connection {
 	public rename(name: string) {
 		this.send({
 			rename: name
+		});
+	}
+
+	public welcome(name: string) {
+		this.send({
+			name: name
+		});
+	}
+
+	public system(message: string) {
+		this.send({
+			system: message
 		});
 	}
 }

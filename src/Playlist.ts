@@ -47,6 +47,10 @@ export class Playlist {
 		return [...this.items];
 	}
 
+	isEmpty(): boolean {
+		return this.items.length === 0;
+	}
+
 	renameItem(index: number, name: string): Promise<void> {
 		if (index >= this.items.length) {
 			throw "out of bounds";

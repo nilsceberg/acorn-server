@@ -5,6 +5,7 @@ import { ScreenRef } from "./ScreenRef";
 import { ScreenGroup } from "./ScreenGroup";
 import { Schedule } from "./Schedule";
 import { Condition } from "./util/Condition";
+import { sleep } from "./util/async";
 
 export class Screen implements LogicalScreen {
 	private name: string;
@@ -31,13 +32,13 @@ export class Screen implements LogicalScreen {
 		this.parentRef = parentRef;
 	}
 
-	private save(): Promise<void> {
+	public save(): Promise<void> {
 		return this.store.saveScreen({
 			uuid: this.getUuid(),
 			name: this.name,
 			parent: this.parent ? this.parent.getUuid() : null,
 			type: ScreenType.Screen,
-			schedule: this.schedule.getUuid(),
+			schedule: this.schedule ? this.schedule.getUuid() : null,
 		});
 	}
 
@@ -115,27 +116,42 @@ export class Screen implements LogicalScreen {
 		return this.identify;
 	}
 
-	public setSchedule(schedule: Schedule): Promise<void> {
+	public async setSchedule(schedule: Schedule): Promise<void> {
 		this.schedule = schedule;
-		return this.save();
+		await this.save();
+		this.connectionCondition.notifyAll();
 	}
 
 	public async start() {
 		console.log(`Screen ${this.getName()} started. <- ${this.getParent() ? this.getParent().getName() : "root"}`);
 		
-		if (!this.schedule) {
-			console.log("Äeh, vi skiter i detta. /" + this.getName());
-			return;
-		}
-		
 		while (true) {
-			console.log("Waiting for connection...");
-			while (!this.connection) {
+			console.log("Waiting for connection and schedule...");
+			while (!this.connection || !this.schedule || !this.schedule.getPlaylist()) {
+				if (!this.schedule) {
+					if (this.connection) {
+						this.connection.system("No schedule");
+					}
+				}
+				else if (!this.schedule.getPlaylist()) {
+					if (this.connection) {
+						this.connection.system("No playlist");
+					}
+				}
+
 				await this.connectionCondition.wait();
 			}
 			console.log("Connection detected.");
 
 			const playlist = this.schedule.getPlaylist();
+
+			while (playlist.isEmpty()) {
+				if (this.connection) {
+					this.connection.system("Empty playlist");
+				}
+				await sleep(1000);
+			}
+
 			const pointer = playlist.play();
 
 			while (this.connection) {
@@ -151,5 +167,13 @@ export class Screen implements LogicalScreen {
 				}
 			}
 		}
+	}
+
+	public accept(connection: Connection) {
+		if (!connection.isClosed()) {
+			this.connection = connection;
+			this.connection.welcome(this.name);
+		}
+		this.start();
 	}
 }

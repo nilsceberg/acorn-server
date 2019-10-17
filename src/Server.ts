@@ -6,20 +6,26 @@ import { ScreenGroup } from "./ScreenGroup";
 
 import * as util from "util";
 import { ScreenRef } from "./ScreenRef";
-import { RegistrationManager } from "./RegistrationManager";
 import { Schedule } from "./Schedule";
 import { PlaylistItemType } from "./PlaylistItem";
 import { WebsiteSlide } from "./slides/Website";
 
 import { v4 as createUuid } from "uuid";
+import { Connection } from "./net/Connection";
+
+interface PendingRegistration {
+	uuid: string;
+	hostname: string;
+	ip: string;
+	connection: Connection;
+}
 
 export class Server {
 	private store: Store;
 	private screens: { [uuid: string]: LogicalScreen } = {};
 	private playlists: { [uuid: string]: Playlist } = {};
 	private schedules: { [uuid: string]: Schedule } = {};
-
-	private registrations: RegistrationManager;
+	private registrations: { [uuid: string]: PendingRegistration } = {};
 	
 	constructor(store: Store) {
 		this.store = store;
@@ -139,5 +145,33 @@ export class Server {
 		this.schedules[uuid] = schedule;
 		await schedule.save();
 		return schedule;
+	}
+	
+	public register(registration: PendingRegistration): void {
+		this.registrations[registration.uuid] = registration;
+	}
+
+	public async acceptRegistration(uuid: string, name: string): Promise<Screen> {
+		const registration = this.registrations[uuid];
+		
+		if (registration) {
+			delete this.registrations[uuid];
+
+			const screen = new Screen(name, new ScreenRef(uuid, this.screens), null, null, this.store);
+			this.screens[screen.getUuid()] = screen;
+			await screen.save();
+			screen.accept(registration.connection);
+			return screen;
+		}
+
+		return null;
+	}
+
+	public getPendingRegistrations(): PendingRegistration[] {
+		return Object.values(this.registrations);
+	}
+
+	public getSchedules(): Schedule[] {
+		return Object.values(this.schedules);
 	}
 }
