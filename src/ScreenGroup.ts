@@ -3,6 +3,7 @@ import { Store, ScreenData, ScreenType } from "./stores/Store";
 import { Connection } from "./net/Connection";
 import { ScreenRef } from "./ScreenRef";
 import { Screen } from "./Screen";
+import { Schedule } from "./Schedule";
 
 export class ScreenGroup implements LogicalScreen {
 	private name: string;
@@ -50,6 +51,11 @@ export class ScreenGroup implements LogicalScreen {
 		this.name = name;
 		await this.save();
 		return this.name;
+	}
+
+	public setSchedule(schedule: Schedule): Promise<void> {
+		//this.schedule = schedule;
+		return this.save();
 	}
 
 	public initParent() {

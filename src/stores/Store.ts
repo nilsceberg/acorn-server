@@ -16,13 +16,11 @@ export interface ScreenData {
 export interface PlaylistData {
 	name: string;
 	uuid: string;
-	items: [
-		{
+	items: {
 			name: string;
 			type: PlaylistItemType;
 			settings: any;
-		}
-	]
+		}[]
 }
 
 export interface ScheduleData {
@@ -38,4 +36,5 @@ export interface Store {
 
 	saveScreen(data: ScreenData): Promise<void>;
 	savePlaylist(data: PlaylistData): Promise<void>;
+	saveSchedule(data: ScheduleData): Promise<void>;
 }

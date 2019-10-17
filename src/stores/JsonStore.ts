@@ -13,13 +13,11 @@ export class JsonStore {
 		} };
 		playlists: { [uuid: string]: {
 			name: string,
-			items: [
-				{
-					name: string,
-					type: PlaylistItemType,
-					settings: any,
-				}
-			]
+			items: {
+				name: string,
+				type: PlaylistItemType,
+				settings: any,
+			}[]
 		}},
 		schedules: { [uuid: string]: {
 			name: string,
@@ -119,6 +117,14 @@ export class JsonStore {
 		this.data.playlists[data.uuid] = {
 			name: data.name,
 			items: data.items,
+		};
+		await this.write();
+	}
+
+	public async saveSchedule(data: ScheduleData): Promise<void> {
+		this.data.schedules[data.uuid] = {
+			name: data.name,
+			playlist: data.playlist,
 		};
 		await this.write();
 	}

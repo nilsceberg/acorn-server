@@ -1,6 +1,6 @@
 export enum PlaylistItemType {
-	Website = "website",
-	Image = "image",
+	Website = "WEBSITE",
+	Image = "IMAGE",
 }
 
 export interface PlaylistItem {
@@ -9,4 +9,6 @@ export interface PlaylistItem {
 	getSettings(): any;
 	getPlayerData(): any;
 	getDuration(playlistDefault: number): number;
+	setSettings(settings: any): void;
+	setName(name: string): void;
 }

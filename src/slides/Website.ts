@@ -1,14 +1,18 @@
 import { PlaylistItem, PlaylistItemType } from "../PlaylistItem";
 
+export interface WebsiteSettings {
+	url: string;
+	duration: number;
+}
+
 export class WebsiteSlide implements PlaylistItem {
 	private name: string;
 	private url: string;
 	private duration: number;
 
-	constructor(name: string, settings: any) {
+	constructor(name: string, settings: WebsiteSettings) {
 		this.name = name;
-		this.url = settings.url;
-		this.duration = settings.duration;
+		this.setSettings(settings);
 	}
 
 	getType(): PlaylistItemType {
@@ -23,7 +27,7 @@ export class WebsiteSlide implements PlaylistItem {
 		return this.duration;
 	}
 
-	getSettings(): any {
+	getSettings(): WebsiteSettings {
 		return {
 			url: this.url,
 			duration: this.duration,
@@ -34,5 +38,19 @@ export class WebsiteSlide implements PlaylistItem {
 		return {
 			url: this.url,
 		};
+	}
+
+	setName(name: string) {
+		this.name = name;
+	}
+
+	setSettings(settings: any) {
+		if (settings.url !== undefined && settings.duration !== undefined) {
+			this.url = settings.url;
+			this.duration = settings.duration;
+		}
+		else {
+			throw "invalid settings for website";
+		}
 	}
 }

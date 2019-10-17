@@ -11,6 +11,8 @@ import { Schedule } from "./Schedule";
 import { PlaylistItemType } from "./PlaylistItem";
 import { WebsiteSlide } from "./slides/Website";
 
+import { v4 as createUuid } from "uuid";
+
 export class Server {
 	private store: Store;
 	private screens: { [uuid: string]: LogicalScreen } = {};
@@ -38,7 +40,7 @@ export class Server {
 				}
 			}
 
-			this.playlists[data.uuid] = new Playlist(data.name, data.uuid, items);
+			this.playlists[data.uuid] = new Playlist(data.name, data.uuid, items, this.store);
 		}
 
 		const schedules = await this.store.loadSchedules();
@@ -49,7 +51,7 @@ export class Server {
 				continue;
 			}
 
-			this.schedules[data.uuid] = new Schedule(data.name, data.uuid, playlist);
+			this.schedules[data.uuid] = new Schedule(data.name, data.uuid, playlist, this.store);
 		}
 
 		const screens = await this.store.loadScreens();
@@ -107,6 +109,10 @@ export class Server {
 		return array;
 	}
 
+	public getPlaylists(): Playlist[] {
+		return Object.values(this.playlists);
+	}
+
 	public getScreen(uuid: string) {
 		return this.screens[uuid];
 	}
@@ -117,5 +123,21 @@ export class Server {
 
 	public getSchedule(uuid: string) {
 		return this.schedules[uuid];
+	}
+	
+	public async createPlaylist(name: string): Promise<Playlist> {
+		const uuid = createUuid();
+		const playlist = new Playlist(name, uuid, [], this.store);
+		this.playlists[uuid] = playlist;
+		await playlist.save();
+		return playlist;
+	}
+	
+	public async createSchedule(name: string): Promise<Schedule> {
+		const uuid = createUuid();
+		const schedule = new Schedule(name, uuid, null, this.store);
+		this.schedules[uuid] = schedule;
+		await schedule.save();
+		return schedule;
 	}
 }

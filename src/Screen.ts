@@ -115,6 +115,11 @@ export class Screen implements LogicalScreen {
 		return this.identify;
 	}
 
+	public setSchedule(schedule: Schedule): Promise<void> {
+		this.schedule = schedule;
+		return this.save();
+	}
+
 	public async start() {
 		console.log(`Screen ${this.getName()} started. <- ${this.getParent() ? this.getParent().getName() : "root"}`);
 		
