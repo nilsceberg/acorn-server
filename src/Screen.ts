@@ -48,6 +48,11 @@ export class Screen implements LogicalScreen {
 	public async setName(name: string): Promise<string> {
 		this.name = name;
 		await this.save();
+
+		if (this.connection) {
+			this.connection.rename(name);
+		}
+
 		return this.name;
 	}
 
