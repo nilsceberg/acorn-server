@@ -10,10 +10,9 @@ export class ScreenGroup implements LogicalScreen {
 	private children: ScreenRef[] = [];
 	private parent: ScreenGroup;
 
-	constructor(name: string, ref: ScreenRef, children: ScreenRef[]) {
+	constructor(name: string, ref: ScreenRef) {
 		this.name = name;
 		this.ref = ref;
-		this.children = children;
 		this.parent = null;
 	}
 

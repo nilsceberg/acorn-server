@@ -65,7 +65,6 @@ export class Server {
 				this.screens[data.uuid] = new ScreenGroup(
 					data.name,
 					new ScreenRef(data.uuid, this.screens),
-					data.children.map(uuid => new ScreenRef(uuid, this.screens))
 				);
 			}
 		}

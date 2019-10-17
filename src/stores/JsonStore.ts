@@ -7,8 +7,9 @@ export class JsonStore {
 	private data: {
 		screens: { [uuid: string]: {
 			name: string,
-			children: string[],
+			parent?: string,
 			schedule?: string,
+			group?: boolean,
 		} };
 		playlists: { [uuid: string]: {
 			name: string,
@@ -60,11 +61,11 @@ export class JsonStore {
 		for (const uuid in this.data.screens) {
 			const data = this.data.screens[uuid];
 			array.push({
-				type: data.children ? ScreenType.Group : ScreenType.Screen,
+				type: data.group ? ScreenType.Group : ScreenType.Screen,
 				uuid: uuid,
 				name: data.name,
 				schedule: data.schedule,
-				children: [...(data.children || [])],
+				parent: data.parent,
 			});
 		}
 		return array;
@@ -98,5 +99,21 @@ export class JsonStore {
 			);
 		}
 		return array;
+	}
+
+	public async saveScreen(data: ScreenData): Promise<void> {
+		this.data.screens[data.uuid] = {
+			group: data.type === ScreenType.Group,
+			name: data.name,
+			schedule: data.schedule,
+			parent: data.parent,
+		};
+	}
+
+	public async savePlaylist(data: PlaylistData): Promise<void> {
+		this.data.playlists[data.uuid] = {
+			name: data.name,
+			items: data.items,
+		};
 	}
 }

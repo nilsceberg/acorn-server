@@ -10,7 +10,7 @@ export interface ScreenData {
 	uuid: string;
 	name: string;
 	schedule?: string;
-	children: string[];
+	parent?: string;
 }
 
 export interface PlaylistData {
@@ -35,4 +35,7 @@ export interface Store {
 	loadScreens(): Promise<ScreenData[]>;
 	loadPlaylists(): Promise<PlaylistData[]>;
 	loadSchedules(): Promise<ScheduleData[]>;
+
+	saveScreen(data: ScreenData): Promise<void>;
+	savePlaylist(data: PlaylistData): Promise<void>;
 }

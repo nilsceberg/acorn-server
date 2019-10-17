@@ -50,8 +50,8 @@ export class Screen implements LogicalScreen {
 	public async setParent(parent: ScreenGroup): Promise<void> {
 		if (this.parent) {
 			this.parent.removeChild(this.ref);
-			parent.addChild(this.ref);
 		}
+		parent.addChild(this.ref);
 		this.parent = parent;
 	}
 
