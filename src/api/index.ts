@@ -29,14 +29,16 @@ export function createApolloServer(server: Server) {
 		[PlaylistItemType.Image]: "ImageSettings",
 	}
 
-	const serializeScreen = (screen: LogicalScreen): ScreenResponse => {
-		return {
+	const serializeScreen = (screen: LogicalScreen): ScreenResponse => screen ?
+		{
 			name: screen.getName(),
 			uuid: screen.getUuid(),
+			group: screen instanceof ScreenGroup,
 			connected: screen.isConnected(),
 			identify: screen.getIdentify(),
-		};
-	}
+			schedule: serializeSchedule(screen.getSchedule()),
+			parentUuid: (screen.getParent() ? screen.getParent().getUuid() : null),
+		} : null;
 
 	const serializePlaylistItem = (playlistItem: PlaylistItem): PlaylistItemResponse => ({
 		name: playlistItem.getName(),
@@ -51,18 +53,25 @@ export function createApolloServer(server: Server) {
 		items: playlist.getItems().map(serializePlaylistItem),
 	} : null);
 
-	const serializeSchedule = (schedule: Schedule): ScheduleResponse => ({
+	const serializeSchedule = (schedule: Schedule): ScheduleResponse => (schedule ? {
 		name: schedule.getName(),
 		uuid: schedule.getUuid(),
 		playlist: serializePlaylist(schedule.getPlaylist()),
-	});
+	} : null);
 
 	const resolvers = {
 		Query: {
 			screens: async () => {
 				return server.getScreens()
-					.filter(s => s.getParent() === null)
+					//.filter(s => s.getParent() === null)
 					.map(serializeScreen);
+			},
+			screen: async (parent: any, args: { screen: string }) => {
+				const screen = server.getScreen(args.screen);
+				if (screen) {
+					return serializeScreen(screen);
+				}
+				return null;
 			},
 			pendingRegistrations: () => {
 				return server.getPendingRegistrations();
@@ -83,12 +92,8 @@ export function createApolloServer(server: Server) {
 			}
 		},
 		Screen: {
-			children: (parent: any, args: any, context: any, info: any): ScreenResponse[] => {
-				console.log(parent);
-				const parentScreen = server.getScreen(parent.uuid);
-				if (parentScreen instanceof ScreenGroup) {
-					return parentScreen.getChildren().map(serializeScreen);
-				}
+			parent: (parent: ScreenResponse, args: any, context: any, info: any): ScreenResponse => {
+				return serializeScreen(server.getScreen(parent.parentUuid));
 			}
 		},
 		PlaylistItemSettings: {

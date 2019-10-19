@@ -47,6 +47,10 @@ export class ScreenGroup implements LogicalScreen {
 		return this.parent;
 	}
 
+	public getSchedule(): Schedule {
+		return null;
+	}
+
 	public async setName(name: string): Promise<string> {
 		this.name = name;
 		await this.save();

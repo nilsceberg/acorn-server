@@ -10,6 +10,7 @@ export interface LogicalScreen {
 	getUuid(): string;
 	getName(): string;
 	getParent(): ScreenGroup;
+	getSchedule(): Schedule;
 
 	initParent(): void;
 

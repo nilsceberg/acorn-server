@@ -4,8 +4,11 @@ import { PlaylistItemType } from "../PlaylistItem";
 export interface ScreenResponse {
 	name: string;
 	uuid: string;
+	group: boolean;
 	connected?: boolean;
 	identify?: boolean;
+	schedule?: ScheduleResponse;
+	parentUuid?: string;
 }
 
 export interface PlaylistItemResponse {
@@ -36,16 +39,18 @@ export interface ScheduleResponse {
 export const typeDefs = gql`
 type Screen {
 	name: String!
-	uuid: String!
+	uuid: ID!
+	group: Boolean!
 	connected: Boolean
 	identify: Boolean
-	children: [Screen]
+	schedule: Schedule
+	parent: Screen
 }
 
 type PendingRegistration {
 	hostname: String
 	ip: String!
-	uuid: String!
+	uuid: ID!
 }
 
 enum PlaylistItemType {
@@ -72,19 +77,20 @@ type PlaylistItem {
 
 type Playlist {
 	name: String!
-	uuid: String!
+	uuid: ID!
 	items: [PlaylistItem!]!
 	defaultDuration: Int!
 }
 
 type Schedule {
 	name: String!
-	uuid: String!
+	uuid: ID!
 	playlist: Playlist
 }
 
 type Query {
 	screens: [Screen]!
+	screen(screen: ID!): Screen
 	pendingRegistrations: [PendingRegistration]!
 	playlists: [Playlist!]!
 	playlist(playlist: ID!): Playlist

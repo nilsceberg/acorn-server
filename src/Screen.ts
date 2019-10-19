@@ -121,6 +121,10 @@ export class Screen implements LogicalScreen {
 		await this.save();
 		this.connectionCondition.notifyAll();
 	}
+	
+	public getSchedule(): Schedule {
+		return this.schedule;
+	}
 
 	public async start() {
 		console.log(`Screen ${this.getName()} started. <- ${this.getParent() ? this.getParent().getName() : "root"}`);
