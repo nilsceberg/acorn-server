@@ -70,13 +70,13 @@ export class Playlist {
 	}
 
 	moveItem(index: number, toIndex: number): Promise<void> {
-		if (index >= this.items.length || toIndex > this.items.length) {
+		if (index >= this.items.length || toIndex >= this.items.length || index < 0 || toIndex < 0) {
 			throw "out of bounds";
 		}
 
 		// Better way?
 		const [ item ] = this.items.splice(index, 1);
-		if (index < toIndex) toIndex--;
+		//if (index < toIndex) toIndex--;
 
 		this.items.splice(toIndex, 0, item);
 		return this.save();
