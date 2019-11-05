@@ -12,6 +12,8 @@ export class Connection {
 	private server: Server;
 	private screen: Screen;
 	private closed: boolean = false;
+	private heartbeat: boolean = true;
+	private heart: NodeJS.Timeout;
 
 	constructor(ws: WebSocket, server: Server) {
 		this.server = server;
@@ -33,7 +35,23 @@ export class Connection {
 		this.ws.on("close", async data => {
 			console.log("Connection lost");
 			this.state = this.close("Client disconnected");
-		})
+		});
+
+		this.ws.on("pong", () => {
+			this.heartbeat = true;
+			console.log("pong");
+		});
+
+		this.heart = setInterval(() => {
+			if (!this.heartbeat) {
+				this.state = this.close("heartbeat lost", true);
+			}
+			else {
+				this.heartbeat = false;
+				this.ws.ping(() => {});
+				console.log("ping");
+			}
+		}, 5000);
 	}
 
 	public isClosed(): boolean {
@@ -44,10 +62,18 @@ export class Connection {
 		this.ws.send(JSON.stringify(message));
 	}
 
-	private close(reason?: string): State {
+	private close(reason?: string, force: boolean = false): State {
 		console.log("Closing connection: " + reason);
 		this.closed = true;
-		this.ws.close();
+		clearInterval(this.heart);
+
+		if (force) {
+			this.ws.terminate();
+		}
+		else {
+			this.ws.close();
+		}
+
 		if (this.screen) {
 			this.screen.setConnection(null);
 		}

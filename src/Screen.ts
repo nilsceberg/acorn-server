@@ -147,15 +147,14 @@ export class Screen implements LogicalScreen {
 			}
 			console.log("Connection detected.");
 
-			const playlist = this.schedule.getPlaylist();
-
-			while (playlist.isEmpty()) {
+			while (this.schedule.getPlaylist().isEmpty()) {
 				if (this.connection) {
 					this.connection.system("Empty playlist");
 				}
 				await sleep(1000);
 			}
 
+			const playlist = this.schedule.getPlaylist();
 			const pointer = playlist.play();
 
 			while (this.connection) {
