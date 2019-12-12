@@ -91,6 +91,7 @@ export class Screen implements LogicalScreen {
 		this.connection = connection;
 
 		if (connection) {
+			this.connection.close("Replaced by new connection", false, true);
 		}
 		else {
 			this.identify = false;

@@ -62,7 +62,7 @@ export class Connection {
 		this.ws.send(JSON.stringify(message));
 	}
 
-	private close(reason?: string, force: boolean = false): State {
+	public close(reason?: string, force: boolean = false, replaced: boolean = false): State {
 		console.log("Closing connection: " + reason);
 		this.closed = true;
 		clearInterval(this.heart);
@@ -74,7 +74,7 @@ export class Connection {
 			this.ws.close();
 		}
 
-		if (this.screen) {
+		if (this.screen && !replaced) {
 			this.screen.setConnection(null);
 		}
 		return this.disconnectedState;
