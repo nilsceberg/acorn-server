@@ -88,12 +88,13 @@ export class Screen implements LogicalScreen {
 	}
 
 	public setConnection(connection: Connection) {
-		this.connection = connection;
-
-		if (connection) {
+		if (this.connection) {
 			this.connection.close("Replaced by new connection", false, true);
 		}
-		else {
+
+		this.connection = connection;
+
+		if (!connection) {
 			this.identify = false;
 		}
 
