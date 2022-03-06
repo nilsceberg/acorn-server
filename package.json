@@ -5,7 +5,8 @@
 	"author": "Nils Ceberg",
 	"license": "MIT",
 	"scripts": {
-		"start": "node build/index"
+		"start": "node build/index",
+		"build": "tsc"
 	},
 	"devDependencies": {
 		"@types/koa": "^2.0.50",
