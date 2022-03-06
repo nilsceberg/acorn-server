@@ -34,15 +34,28 @@ export class JsonStore {
 	}
 
 	public async load() {
+		let file: fs.FileHandle;
+
 		try {
-			const file = await fs.open(this.filename, "r");
-			this.data = JSON.parse(await file.readFile({
-				encoding: "utf-8",
-			}));
-			await file.close();
+			file = await fs.open(this.filename, "r");
 		} catch (e) {
 			console.warn(e);
 			await this.write();
+			return;
+		}
+
+		try {
+			this.data = JSON.parse(await file.readFile({
+				encoding: "utf-8",
+			}));
+
+			// TODO: validate settings
+		}
+		catch (e) {
+			throw `JSON store ${this.filename} is invalid`;
+		}
+		finally {
+			await file.close();
 		}
 	}
 
