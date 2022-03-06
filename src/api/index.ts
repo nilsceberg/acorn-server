@@ -102,15 +102,15 @@ export function createApolloServer(server: Server) {
 			}
 		},
 		Mutation: {
-			identify: (parent: any, args: any) => {
-				const screen = server.getScreen(args.uuid);
+			identify: (parent: any, args: { screen: string, identify: boolean }) => {
+				const screen = server.getScreen(args.screen);
 				if (screen) {
 					return screen.setIdentify(args.identify);
 				}
 				return false;
 			},
-			renameScreen: async (parent: any, args: { uuid: string, name: string }) => {
-				const screen = server.getScreen(args.uuid);
+			renameScreen: async (parent: any, args: { screen: string, name: string }) => {
+				const screen = server.getScreen(args.screen);
 				if (screen) {
 					await screen.setName(args.name);
 					return serializeScreen(screen);

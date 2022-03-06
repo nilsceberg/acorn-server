@@ -98,8 +98,8 @@ type Query {
 }
 
 type Mutation {
-	renameScreen(uuid: String!, name: String!): Screen
-	identify(uuid: String!, identify: Boolean!): Boolean!
+	renameScreen(screen: ID!, name: String!): Screen
+	identify(screen: ID!, identify: Boolean!): Boolean!
 	
 	createPlaylist(name: String!): Playlist!
 	deletePlaylist(playlist: ID!): Boolean
